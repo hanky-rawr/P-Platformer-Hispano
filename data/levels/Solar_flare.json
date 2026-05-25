@@ -1,0 +1,22 @@
+{
+    "id": 84930211,
+    "name": "Solar Flare",
+    "tag": "misc placements",
+    "author": "Knobbelboy",
+    "creators": ["Knobbelboy", "Team Genesis"],
+    "verifier": "Combined",
+    "verification": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    "percentToQualify": "100",
+    "password": "Free to Copy",
+    "records": [
+        {
+            "user": "juansito",
+            "device": "PC",
+            "time": "43:34:09",
+            "country": "españa",
+            "link": "https://youtube.com/",
+            "percent": 100,
+            "hz": 60
+        }
+    ]
+}

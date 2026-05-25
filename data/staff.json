@@ -1,0 +1,12 @@
+{
+    "creator": {
+        "name": "Drak y Ezequiel",
+        "avatar": "data/imgs/pñ.png",
+        "bio": "Desarrollador principal y entusiasta de los niveles de plataforma en Geometry Dash."
+    },
+    "staff_members": [
+        { "name": "Landres", "role": "Moderador", "color": "#2168b3" },
+        { "name": "Pepesito", "role": "Moderador", "color": "#2168b3" },
+        { "name": "Krinsi", "role": "Moderador", "color": "#2168b3" }
+    ]
+}

@@ -1,0 +1,31 @@
+{
+    "id": 113599729,
+    "name": "Subterminal Point",
+    "tag": "No rated",
+    "author": "SyQual",
+    "creators": ["SyQual", "Hank"],
+    "verifier": "PlayLino",
+    "verification": "https://www.youtube.com/watch?v=urJ47fsuss4",
+    "percentToQualify": "100",
+    "password": "Free To Copy",
+    "records": [
+        {
+            "user": "Benja_dark",
+            "device": "PC",
+            "time": "34:09",
+            "country": "Argentina",
+            "link": "https://youtube.com/",
+            "percent": 100,
+            "hz": 60
+        },
+        {
+            "user": "Migroks",
+            "device": "Móvil",
+            "time": "12:09:67",
+            "country": "México",
+            "link": "https://youtube.com/",
+            "percent": 100,
+            "hz": 120
+        }
+    ]
+}
