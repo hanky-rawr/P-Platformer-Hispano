@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
             level.records.forEach(rec => {
                 const country = rec.country ? rec.country.trim() : "Desconocido";
                 const user = rec.user.trim();
-                const isCompletion = parseInt(rec.percent) === 100;
+                const isCompletion = true;
 
                 // --- ESTADÍSTICAS POR PAÍS ---
                 if (!countryStats[country]) {
@@ -215,7 +215,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td><span class="device-tag">${rec.device}</span></td>
                 <td><span class="country-tag clickable-country" data-country="${rec.country}">${rec.country}</span></td>
                 <td>${rec.hz}Hz</td>
-                <td><span class="percent-badge ${rec.percent == 100 ? 'hundred' : ''}">${rec.percent}%</span></td>
                 <td>${rec.time ? `<span class="time-badge">⏱ ${rec.time}</span>` : '—'}</td>
                 <td><a href="${rec.link}" target="_blank" class="record-link">Ver Video</a></td>
             </tr>
@@ -243,10 +242,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             <div class="meta-grid">
                 <div class="meta-card">
-                    <h3>Porcentaje Requerido</h3>
-                    <p>${level.percentToQualify}%</p>
-                </div>
-                <div class="meta-card">
                     <h3>Contraseña</h3>
                     <p>${level.password}</p>
                 </div>
@@ -261,13 +256,12 @@ document.addEventListener('DOMContentLoaded', () => {
                             <th>Plataforma</th>
                             <th>País</th>
                             <th>Hz</th>
-                            <th>Progreso</th>
                             <th>Tiempo</th>
                             <th>Evidencia</th>
                         </tr>
                     </thead>
                     <tbody>
-                        ${recordsRows || '<tr><td colspan="7" style="text-align:center; padding: 2rem;">No hay récords validados en este nivel.</td></tr>'}
+                        ${recordsRows || '<tr><td colspan="6" style="text-align:center; padding: 2rem;">No hay récords validados en este nivel.</td></tr>'}
                     </tbody>
                 </table>
             </div>
