@@ -4,9 +4,9 @@ Una plataforma web moderna para gestionar y visualizar un ranking de niveles de 
 
 ## 🎮 Qué es esto
 
-**GD Platformer Hispano** es una *Demon List* (lista de demonios) interactiva para niveles de plataforma de Geometry Dash. Funciona como:
+**GD Platformer Hispano** es una *Demon List* interactiva para niveles de plataforma de Geometry Dash. Funciona como:
 
-- **Ranking oficial** de niveles de plataforma ordenados por dificultad
+- **Ranking semi oficial** de niveles de plataforma ordenados por dificultad
 - **Leaderboard comunitario** con estadísticas de jugadores por país
 - **Base de datos de récords** verificados y visualizables
 - **Portal informativo** con datos de staff y objetivos de la comunidad
