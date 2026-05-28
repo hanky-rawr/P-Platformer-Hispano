@@ -20,6 +20,13 @@
     font-family: monospace;
 }
 
+.level-points-inline {
+    color: var(--primary-glow);
+    font-weight: 600;
+    font-size: 0.78rem;
+    opacity: 0.85;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -543,7 +550,7 @@ body {
 .modal-overlay {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(232, 247, 255, 0.85); /* Fondo celeste muy claro translúcido */
+    background: rgba(232, 247, 255, 0.85); 
     backdrop-filter: blur(5px);
     z-index: 1000;
     display: flex;
@@ -1021,9 +1028,7 @@ body {
     box-shadow: 0 0 25px rgba(88, 101, 242, 0.4);
 }
 
-/* ===================== RESPONSIVE MÓVIL ===================== */
 
-/* Botón hamburguesa (oculto en desktop) */
 .nav-hamburger {
     display: none;
     flex-direction: column;
@@ -1047,8 +1052,10 @@ body {
 .nav-hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
 
 @media (max-width: 768px) {
+    body {
+        overflow: auto;
+    }
 
-    /* NAVBAR */
     .navbar {
         flex-wrap: wrap;
         padding: 0.7rem 1rem;
@@ -1105,7 +1112,6 @@ body {
         min-width: 0;
     }
 
-    /* LAYOUT PRINCIPAL: sidebar arriba, detalle abajo */
     .main-layout {
         flex-direction: column;
         height: auto;
@@ -1139,7 +1145,6 @@ body {
         overflow: visible;
     }
 
-    /* DETALLE DEL NIVEL */
     .detail-title-row {
         flex-direction: column;
         align-items: flex-start;
@@ -1164,7 +1169,6 @@ body {
         gap: 0.75rem;
     }
 
-    /* TABLA DE RÉCORDS: scroll horizontal */
     .records-section {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
@@ -1180,7 +1184,6 @@ body {
         font-size: 0.8rem;
     }
 
-    /* LEADERBOARD */
     .leaderboard-view {
         margin: 1rem;
         width: auto;
@@ -1213,7 +1216,6 @@ body {
         -webkit-overflow-scrolling: touch;
     }
 
-    /* MODAL */
     .modal-content {
         padding: 1.25rem;
         width: 95%;
@@ -1225,7 +1227,6 @@ body {
         gap: 0.6rem;
     }
 
-    /* VISTA INFO */
     .info-view {
         grid-template-columns: 1fr;
         padding: 1rem;
@@ -1314,13 +1315,11 @@ body {
     vertical-align: middle;
 }
 
-/* BOTÓN VOLVER EN MÓVIL */
 .mobile-back-btn {
     display: none;
 }
 
 @media (max-width: 768px) {
-    /* Botón volver */
     .mobile-back-btn {
         display: flex;
         align-items: center;
@@ -1340,25 +1339,24 @@ body {
         background: rgba(0, 191, 255, 0.2);
     }
 
-    /* Detalle a pantalla completa en móvil */
     .mobile-detail-active {
         position: fixed;
         top: 0; left: 0;
         width: 100%;
         height: 100%;
-        z-index: 50;
+        z-index: 150;
         background: linear-gradient(135deg, #ffffff 0%, var(--bg-pastel) 100%);
         overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
         padding: 1rem;
-        padding-top: calc(env(safe-area-inset-top) + 1rem);
+        padding-top: 1rem;
+        box-sizing: border-box;
     }
 
-    /* Sidebar ocupa toda la pantalla en móvil cuando no hay detalle */
     .sidebar-list {
         height: calc(100vh - 120px) !important;
     }
 
-    /* CARDS DEL LEADERBOARD EN MÓVIL */
     .lb-cards {
         display: flex;
         flex-direction: column;
