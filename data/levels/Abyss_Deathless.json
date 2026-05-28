@@ -1,0 +1,20 @@
+{
+    "id": 98163412,
+    "name": "Abyss Deathless",
+    "tag": "",
+    "author": "zYuko",
+    "creators": ["zYuko"],
+    "verifier": "zYuko",
+    "verification": "https://www.youtube.com/watch?v=jD5BNFHF3Z8",
+    "password": "",
+    "records": [
+        {
+            "user": "paco",
+            "device": "PC",
+            "time": "11:34:09",
+            "country": "Argentina",
+            "link": "https://youtube.com/",
+            "hz": 360
+        }
+    ]
+}
