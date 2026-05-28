@@ -65,16 +65,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 const user = rec.user.trim();
                 const isCompletion = true;
 
-                // --- ESTADÍSTICAS POR PAÍS ---
                 if (!countryStats[country]) {
                     countryStats[country] = {
                         name: country,
                         players: new Set(),
                         recordsCount: 0,
                         uniqueDemons: new Set(),
+                        totalPoints: 0,
                         hardestName: "Ninguno",
                         hardestRank: Infinity,
-                        demonsBreakdown: {} 
+                        demonsBreakdown: {}
                     };
                 }
 
@@ -82,6 +82,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 countryStats[country].players.add(user);
                 
                 if (isCompletion) {
+                    if (!countryStats[country].uniqueDemons.has(level.id)) {
+                        countryStats[country].totalPoints += levelPoints;
+                    }
                     countryStats[country].uniqueDemons.add(level.id);
                     
                     if (!countryStats[country].demonsBreakdown[level.name]) {
@@ -160,6 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         levels.forEach((level) => {
             const realRank = allLevels.findIndex(l => l.id === level.id) + 1;
+            const levelPoints = Math.max(10, 250 - ((realRank - 1) * 15));
             const div = document.createElement('div');
             div.className = 'level-item';
             if (currentLevel && level.id === currentLevel.id) div.classList.add('selected');
@@ -168,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="level-rank">#${realRank}</div>
                 <div class="level-info-meta">
                     <div class="level-name">${level.name}</div>
-                    <div class="level-author">Por ${level.author}</div>
+                    <div class="level-author">Por ${level.author} <span class="level-points-inline">| Pto. ${levelPoints}</span></div>
                 </div>
                 ${level.tag ? `<span class="level-tag-badge">${level.tag}</span>` : ''}
             `;
@@ -176,28 +180,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.querySelectorAll('.level-item').forEach(i => i.classList.remove('selected'));
                 div.classList.add('selected');
                 if (isMobile()) {
-                    // En móvil: ocultar lista y mostrar detalle a pantalla completa
                     const sidebar = document.querySelector('.sidebar-list');
                     const detail = document.getElementById('level-detail-panel');
                     if (sidebar) sidebar.style.display = 'none';
                     if (detail) {
                         detail.classList.add('mobile-detail-active');
-                        // Agregar botón volver si no existe
-                        if (!document.getElementById('mobile-back-btn')) {
-                            const backBtn = document.createElement('button');
-                            backBtn.id = 'mobile-back-btn';
-                            backBtn.className = 'mobile-back-btn';
-                            backBtn.innerHTML = '✕ Volver a la lista';
-                            backBtn.onclick = () => {
-                                if (sidebar) sidebar.style.display = '';
-                                detail.classList.remove('mobile-detail-active');
-                                backBtn.remove();
-                            };
-                            detail.prepend(backBtn);
-                        }
+                        detail.scrollTop = 0;
                     }
+                    displayLevelDetails(level);
+                    const detail2 = document.getElementById('level-detail-panel');
+                    if (detail2 && !document.getElementById('mobile-back-btn')) {
+                        const backBtn = document.createElement('button');
+                        backBtn.id = 'mobile-back-btn';
+                        backBtn.className = 'mobile-back-btn';
+                        backBtn.innerHTML = '← Volver a la lista';
+                        backBtn.onclick = () => {
+                            if (sidebar) sidebar.style.display = '';
+                            detail2.classList.remove('mobile-detail-active');
+                            detail2.scrollTop = 0;
+                            backBtn.remove();
+                        };
+                        detail2.prepend(backBtn);
+                    }
+                } else {
+                    displayLevelDetails(level);
                 }
-                displayLevelDetails(level);
             };
             currentListContainer.appendChild(div);
         });
@@ -290,7 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
         `;
 
-        const sortedCountries = Object.values(countryStats).sort((a, b) => b.uniqueDemons.size - a.uniqueDemons.size || b.recordsCount - a.recordsCount);
+        const sortedCountries = Object.values(countryStats).sort((a, b) => b.totalPoints - a.totalPoints || b.uniqueDemons.size - a.uniqueDemons.size);
 
         if (currentLeaderboardSubView === 'players') {
             let playersToShow = playerLeaderboard;
@@ -344,6 +351,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <div class="lb-card-meta">
                                     <span>${c.players.size} jugadores</span>
                                     <span class="demon-count-badge">${c.uniqueDemons.size} demons</span>
+                                    <span class="lb-card-pts">${c.totalPoints} pts</span>
                                 </div>
                                 <div class="lb-card-sub">Hardest: <em>${c.hardestName}</em></div>
                             </div>
@@ -353,16 +361,16 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 contentHtml += `
                     <table class="records-table unified-table">
-                        <thead><tr><th>Puesto</th><th>País</th><th>Jugadores</th><th>Récords Totales</th><th>Demons Distintos</th><th>Hardest del País</th></tr></thead>
+                        <thead><tr><th>Puesto</th><th>País</th><th>Jugadores</th><th>Demons Distintos</th><th>Hardest del País</th><th>Puntos</th></tr></thead>
                         <tbody>
                             ${sortedCountries.map((c, idx) => `
                                 <tr>
                                     <td><strong>#${idx + 1}</strong></td>
                                     <td><strong class="clickable-text" data-country="${c.name}">${getFlag(c.name)} ${c.name}</strong></td>
                                     <td>${c.players.size}</td>
-                                    <td>${c.recordsCount}</td>
                                     <td><span class="demon-count-badge">${c.uniqueDemons.size}</span></td>
                                     <td style="font-size:0.9rem;color:#a4c2e6;">${c.hardestName}</td>
+                                    <td style="color:var(--primary-glow);font-weight:bold;">${c.totalPoints}</td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -544,7 +552,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function attachModalClickEvents() {
-        // Eventos para abrir modal de país
         document.querySelectorAll('.clickable-country, .clickable-text').forEach(el => {
             el.addEventListener('click', (e) => {
                 const country = e.currentTarget.getAttribute('data-country');
@@ -641,7 +648,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 let titleText = countryFilterName; 
                 if (tagName) titleText += ` — ${tagName}`;
                 
-                // Conservar el dropdown dentro del título
                 const dropdown = document.getElementById('tag-filter');
                 listTitle.textContent = titleText;
                 if (dropdown) listTitle.appendChild(dropdown);
