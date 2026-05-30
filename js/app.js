@@ -144,14 +144,26 @@ document.addEventListener('DOMContentLoaded', () => {
                             return res.json();
                         })
                         .then(data => ({ file, data }))
-                        .catch(err => ({ file, error: err.message }))
+                        .catch(err => {
+                            let reason = '';
+                            if (err.message.includes('404')) {
+                                reason = `El archivo "${file}.json" está en _list.json pero no existe en la carpeta data/levels/`;
+                            } else if (err.message.includes('JSON') || err.message.includes('Unexpected')) {
+                                reason = `El archivo "${file}.json" tiene un error de sintaxis JSON (coma de más, llave sin cerrar, etc.)`;
+                            } else if (err.message.includes('NetworkError') || err.message.includes('Failed to fetch')) {
+                                reason = `No se pudo conectar para cargar "${file}.json" (error de red)`;
+                            } else {
+                                reason = `Error desconocido: ${err.message}`;
+                            }
+                            return { file, error: reason };
+                        })
                 )
             );
 
             results.forEach(result => {
                 const val = result.value;
                 if (val.error) {
-                    loadErrors.push({ file: val.file + '.json', errors: [`No se pudo cargar: ${val.error}`] });
+                    loadErrors.push({ file: val.file + '.json', errors: [val.error] });
                     return;
                 }
                 const validationErrors = validateLevel(val.data, val.file);
