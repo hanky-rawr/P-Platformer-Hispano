@@ -1,0 +1,20 @@
+{
+    "id": 98163412,
+    "name": "The Abyss Deathless",
+    "tag": "Deathless",
+    "author": "zYuko",
+    "creators": ["zYuko"],
+    "verifier": "GToast",
+    "verification": "https://www.youtube.com/watch?v=jD5BNFHF3Z8",
+    "password": "gratis",
+    "records": [
+        {
+            "user": "paco",
+            "device": "PC",
+            "time": "11:34:09",
+            "country": "Argentina",
+            "link": "https://youtube.com/",
+            "hz": 360
+        }
+    ]
+}
