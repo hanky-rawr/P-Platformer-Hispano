@@ -922,6 +922,7 @@ body {
     margin-top: 1rem;
 }
 
+/* ===================== ERROR FAB ===================== */
 .error-fab {
     position: fixed;
     bottom: 1.5rem;
