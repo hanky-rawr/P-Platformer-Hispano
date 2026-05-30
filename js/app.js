@@ -28,16 +28,143 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const isMobile = () => window.innerWidth <= 768;
 
+    const loadErrors = [];
+
+    function validateLevel(level, filename) {
+        const errors = [];
+        if (!level.id) errors.push(`Falta el campo "id"`);
+        if (!level.name) errors.push(`Falta el campo "name"`);
+        if (!level.author) errors.push(`Falta el campo "author"`);
+        if (!Array.isArray(level.creators)) errors.push(`"creators" debe ser un array`);
+        if (!level.verifier) errors.push(`Falta el campo "verifier"`);
+        if (!Array.isArray(level.records)) errors.push(`"records" debe ser un array`);
+        if (Array.isArray(level.records)) {
+            level.records.forEach((rec, i) => {
+                if (!rec.user) errors.push(`Record #${i+1}: falta "user"`);
+                if (!rec.country) errors.push(`Record #${i+1}: falta "country"`);
+                if (!rec.hz) errors.push(`Record #${i+1}: falta "hz"`);
+                if (!rec.link) errors.push(`Record #${i+1}: falta "link"`);
+            });
+        }
+        return errors;
+    }
+
+    function showErrorPanel() {
+        if (loadErrors.length === 0) return;
+
+        const existing = document.getElementById('error-fab');
+        if (existing) existing.remove();
+
+        const fab = document.createElement('div');
+        fab.id = 'error-fab';
+        fab.className = 'error-fab';
+        fab.innerHTML = `⚠️ <span>${loadErrors.length} error${loadErrors.length > 1 ? 'es' : ''}</span>`;
+
+        let isDragging = false, dragOffsetX = 0, dragOffsetY = 0;
+
+        fab.addEventListener('mousedown', (e) => {
+            if (e.target.closest('.error-panel')) return;
+            isDragging = true;
+            dragOffsetX = e.clientX - fab.getBoundingClientRect().left;
+            dragOffsetY = e.clientY - fab.getBoundingClientRect().top;
+            fab.style.transition = 'none';
+            e.preventDefault();
+        });
+
+        // Touch support
+        fab.addEventListener('touchstart', (e) => {
+            if (e.target.closest('.error-panel')) return;
+            isDragging = true;
+            const t = e.touches[0];
+            dragOffsetX = t.clientX - fab.getBoundingClientRect().left;
+            dragOffsetY = t.clientY - fab.getBoundingClientRect().top;
+            fab.style.transition = 'none';
+        }, { passive: true });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            fab.style.left = (e.clientX - dragOffsetX) + 'px';
+            fab.style.top = (e.clientY - dragOffsetY) + 'px';
+            fab.style.right = 'auto'; fab.style.bottom = 'auto';
+        });
+
+        document.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            const t = e.touches[0];
+            fab.style.left = (t.clientX - dragOffsetX) + 'px';
+            fab.style.top = (t.clientY - dragOffsetY) + 'px';
+            fab.style.right = 'auto'; fab.style.bottom = 'auto';
+        }, { passive: true });
+
+        document.addEventListener('mouseup', () => { isDragging = false; });
+        document.addEventListener('touchend', () => { isDragging = false; });
+
+        const panel = document.createElement('div');
+        panel.className = 'error-panel';
+        panel.innerHTML = `
+            <div class="error-panel-header">
+                <span>⚠️ Errores detectados</span>
+                <button class="error-panel-close" id="error-panel-close">✕</button>
+            </div>
+            <div class="error-panel-body">
+                ${loadErrors.map(e => `
+                    <div class="error-entry">
+                        <div class="error-entry-file">📄 ${e.file}</div>
+                        <ul>${e.errors.map(err => `<li>${err}</li>`).join('')}</ul>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+        panel.style.display = 'none';
+
+        fab.addEventListener('click', (e) => {
+            if (isDragging) return;
+            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+        });
+
+        panel.querySelector('#error-panel-close').addEventListener('click', (e) => {
+            e.stopPropagation();
+            panel.style.display = 'none';
+        });
+
+        fab.appendChild(panel);
+        document.body.appendChild(fab);
+    }
+
     async function init() {
         try {
             const listResponse = await fetch('data/levels/_list.json');
             const levelFiles = await listResponse.json();
-            const levelPromises = levelFiles.map(file => fetch(`data/levels/${file}.json`).then(res => res.json()));
-            allLevels = await Promise.all(levelPromises);
+
+            const results = await Promise.allSettled(
+                levelFiles.map(file =>
+                    fetch(`data/levels/${file}.json`)
+                        .then(res => {
+                            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                            return res.json();
+                        })
+                        .then(data => ({ file, data }))
+                        .catch(err => ({ file, error: err.message }))
+                )
+            );
+
+            results.forEach(result => {
+                const val = result.value;
+                if (val.error) {
+                    loadErrors.push({ file: val.file + '.json', errors: [`No se pudo cargar: ${val.error}`] });
+                    return;
+                }
+                const validationErrors = validateLevel(val.data, val.file);
+                if (validationErrors.length > 0) {
+                    loadErrors.push({ file: val.file + '.json', errors: validationErrors });
+                } else {
+                    allLevels.push(val.data);
+                }
+            });
 
             const comunidadResponse = await fetch('data/comunidad.json');
             comunidadData = await comunidadResponse.json();
-            
+
             const staffResponse = await fetch('data/staff.json');
             staffData = await staffResponse.json();
 
@@ -47,8 +174,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (allLevels.length > 0) displayLevelDetails(allLevels[0]);
 
             setupEvents();
+            showErrorPanel();
+
         } catch (error) {
-            console.error("Error:", error);
+            console.error("Error crítico:", error);
         }
     }
 
